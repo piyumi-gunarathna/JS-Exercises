@@ -32,12 +32,28 @@ function checkForWinner() {
         }
         i++;
     }
+    this.checkForEmptyCells();
+}
+
+function checkForEmptyCells() {
+    for(var i = 1; i <= 9; i++) {
+        if (!document.getElementById(i).innerHTML.length > 0) 
+            return true;
+    }
+    document.getElementById('status').innerHTML = `Game Over - No One Wins`;   
+    currentPlayer = null;
 }
 
 function selectItem(id){
     if(!currentPlayer) {
-        alert('Reset to play again');
+        document.getElementById('error').innerHTML = 'Please reset to play again';
+        return;
     }
+    if(document.getElementById(id).innerHTML.length > 0) {
+        document.getElementById('error').innerHTML = 'Please select empty cell';
+        return;
+    }
+    document.getElementById('error').innerHTML = '';
     document.getElementById(id).innerHTML = currentPlayer.symbol;
     
     if(currentPlayer.symbol === player1.symbol) {
@@ -53,6 +69,10 @@ function selectItem(id){
 
 function endGame(symbol) {
     document.getElementById('status').innerHTML = `Game Over - ${symbol} Wins`;
+    const winner = symbol === player1.symbol? player1 : player2;
+    for (var i=0; i < winner.pickedCells.length; i++ ){
+        document.getElementById(winner.pickedCells[i]).style.color = "red";
+    }   
     currentPlayer = null;
 }
 
@@ -60,6 +80,7 @@ function startNewGame() {
     player1 = new Player('O', 'Player 1');
     player2 = new Player('X', 'Player 2');
     currentPlayer = player1;
+    document.getElementById('error').innerHTML = '';
     this.setStatus();
 }
 
